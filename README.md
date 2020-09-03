@@ -1,2 +1,2 @@
 # Math2Code
- The short cut for learning math if you already know how to program and the reference guide for math terms
+ A set of jupyter notebooks that are to become a referance guide for people learning math that know code or know math but need to learn to code
