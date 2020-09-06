@@ -32,7 +32,7 @@ for id in ids:
 	p.append((
 		id,
 		#people's value
-		sts.lognorm.rvs(.7)*100,
+		sts.lognorm.rvs(.7)*100000,
 		#people's ability
 		(1/(sts.lognorm.rvs(.99)+1))
 	))
@@ -48,9 +48,9 @@ def runSim(t):
 	while i<t:
 		print('itter:',i)
 		for id,value,ability in p:
-			p['value'][(cnt+1)%numOfP]+=(value*(ability))
-			p['value'][cnt]-=(value*(ability))
-			print(p['value'][cnt],(value*(ability)))
+			p['value'][(cnt+1)%numOfP]+=(value*(ability+1))
+			p['value'][cnt]-=(value*(ability+1))
+			print(p['value'][cnt],(value*(ability+1)))
 			cnt+=1
 		i+=1;
 		history.append(copy.deepcopy(p))
