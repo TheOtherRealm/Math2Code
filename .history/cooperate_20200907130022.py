@@ -23,37 +23,35 @@ np.set_printoptions(suppress=True)
 #Number of People
 numOfP=50
 #Array of people's ids
-ids=np.array([range(0,numOfP),np.zeros(numOfP),np.zeros(numOfP)],dtype=[('id','int64'),('helpedMe','int64'),('iHelped','int64')])
+ids=sp.array(range(0,numOfP),dtype='int64')
 #People object
-peo=[];
+p=[];
 #Populate people with attributes
-for id in ids[0]:
-	peo.append((
+for id in ids:
+	p.append((
 		id,
 		#people's value
 		sts.lognorm.rvs(.5)*100000,
 		#people's ability
-		(1/(sts.lognorm.rvs(.99)+1)),
-		#help needed
-		((sts.lognorm.rvs(.99))*100),
-		#people helped
-		copy.deepcopy(ids)
+		(1/(sts.lognorm.rvs(.99)+1))
+		#entropy required to get help
+		((sts.lognorm.rvs(.99)+1)*100)
 	))
-# peo
-peo=np.array(peo,dtype=[('id','int64'),('value','float64'),('ability','float32'),('entropy','float32'),('helped','object')])
-# np.sum(peo['value'])
+p=np.array(p,dtype=[('id','int64'),('value','float64'),('ability','float32')])
+
 # plt.plot(p[1])
 # %%
-history=[copy.deepcopy(peo)]
-def runSim(t,p):
+history=[copy.deepcopy(p)]
+def runSim(t):
 	cnt=0
 	i=0
 	while i<t:
 		# print('itter:',i)
-		for id,value,ability,entropy,ids in p:
+		for id,value,ability in p:
+			entropy=((sts.lognorm.rvs(.99)+1)*100)
 			lowest=np.where(p['value'] == np.amin(p['value']))
 			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
-			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
+			amountToTransfer+=entropy
 			# print(cnt,amountToTransfer)
 			p['value'][lowest[0]]+=amountToTransfer
 			p['value'][cnt]-=amountToTransfer
@@ -62,13 +60,13 @@ def runSim(t,p):
 		history.append([i,copy.deepcopy(p)])
 		cnt=0
 
-runSim(1000,peo)
+runSim(100)
 historyA=np.asarray(history)
 #%%
 print(history[0:1])
-print(history[999:1000])
+print(history[99:100])
 # %%
-peo['value']
+p['value']
 # %%
 '''
 			entropy=(1/(sts.lognorm.rvs(.99)+1))*.1

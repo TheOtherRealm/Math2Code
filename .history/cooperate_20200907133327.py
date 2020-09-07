@@ -23,25 +23,22 @@ np.set_printoptions(suppress=True)
 #Number of People
 numOfP=50
 #Array of people's ids
-ids=np.array([range(0,numOfP),np.zeros(numOfP),np.zeros(numOfP)],dtype=[('id','int64'),('helpedMe','int64'),('iHelped','int64')])
+ids=sp.array(range(0,numOfP),dtype='int64')
 #People object
 peo=[];
 #Populate people with attributes
-for id in ids[0]:
+for id in ids:
 	peo.append((
 		id,
 		#people's value
 		sts.lognorm.rvs(.5)*100000,
 		#people's ability
 		(1/(sts.lognorm.rvs(.99)+1)),
-		#help needed
-		((sts.lognorm.rvs(.99))*100),
-		#people helped
-		copy.deepcopy(ids)
+		#entropy required to get help
+		((sts.lognorm.rvs(.99))*100)
 	))
-# peo
-peo=np.array(peo,dtype=[('id','int64'),('value','float64'),('ability','float32'),('entropy','float32'),('helped','object')])
-# np.sum(peo['value'])
+peo=np.array(peo,dtype=[('id','int64'),('value','float64'),('ability','float32'),('entropy','float32')])
+np.sum(peo['value'])
 # plt.plot(p[1])
 # %%
 history=[copy.deepcopy(peo)]
@@ -50,10 +47,11 @@ def runSim(t,p):
 	i=0
 	while i<t:
 		# print('itter:',i)
-		for id,value,ability,entropy,ids in p:
+		for id,value,ability,entropy in p:
 			lowest=np.where(p['value'] == np.amin(p['value']))
+			
 			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
-			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
+			amountToTransfer-=entropy
 			# print(cnt,amountToTransfer)
 			p['value'][lowest[0]]+=amountToTransfer
 			p['value'][cnt]-=amountToTransfer

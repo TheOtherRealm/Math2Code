@@ -23,7 +23,7 @@ np.set_printoptions(suppress=True)
 #Number of People
 numOfP=50
 #Array of people's ids
-ids=np.array([range(0,numOfP),np.zeros(numOfP),np.zeros(numOfP)],dtype=[('id','int64'),('helpedMe','int64'),('iHelped','int64')])
+ids=np.array([range(0,numOfP),np.zeros(numOfP)],dtype='int64')
 #People object
 peo=[];
 #Populate people with attributes
@@ -37,7 +37,7 @@ for id in ids[0]:
 		#help needed
 		((sts.lognorm.rvs(.99))*100),
 		#people helped
-		copy.deepcopy(ids)
+		ids
 	))
 # peo
 peo=np.array(peo,dtype=[('id','int64'),('value','float64'),('ability','float32'),('entropy','float32'),('helped','object')])
