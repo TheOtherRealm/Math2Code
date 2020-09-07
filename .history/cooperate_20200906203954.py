@@ -31,7 +31,7 @@ for id in ids:
 	p.append((
 		id,
 		#people's value
-		sts.lognorm.rvs(.5)*100000,
+		sts.lognorm.rvs(.3)*100000,
 		#people's ability
 		(1/(sts.lognorm.rvs(.99)+1))
 		#entropy required to get help
@@ -39,6 +39,7 @@ for id in ids:
 p=np.array(p,dtype=[('id','int64'),('value','float64'),('ability','float32')])
 
 # plt.plot(p[1])
+plt.hist(p['value'],bins=200,  density=True)
 # %%
 history=[copy.deepcopy(p)]
 def runSim(t):
@@ -47,26 +48,13 @@ def runSim(t):
 	while i<t:
 		# print('itter:',i)
 		for id,value,ability in p:
-			entropy=((sts.lognorm.rvs(.99)+1)*100)
-			lowest=np.where(p['value'] == np.amin(p['value']))
-			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
-			amountToTransfer+=entropy
-			# print(cnt,amountToTransfer)
-			p['value'][lowest[0]]+=amountToTransfer
-			p['value'][cnt]-=amountToTransfer
+			numpy.where(arr == numpy.amin(arr))
+			p['value'][(cnt+1)%numOfP]+=(value*abs(ability))
+			p['value'][cnt]-=(value*abs(ability))
 			cnt+=1
 		i+=1;
 		history.append([i,copy.deepcopy(p)])
 		cnt=0
-
-runSim(100)
-historyA=np.asarray(history)
-#%%
-print(history[0:1])
-print(history[99:100])
-# %%
-p['value']
-# %%
 '''
 			entropy=(1/(sts.lognorm.rvs(.99)+1))*.1
 			if(p['value'][(cnt+1)%numOfP]<p['value'][(cnt)%numOfP]):
@@ -84,6 +72,11 @@ p['value']
 			# print(p['value'][cnt],(value*(ability)))
 			# print(p['value'][cnt],(value*(ability)))
 '''
+runSim(1000)
+historyA=np.asarray(history)
 #%%
-plt.hist(p['value']*((sts.lognorm.rvs(.99)+1)*100),bins=200,  density=True)
+# print(history[1])
+print(history[999:1000])
+# %%
+p['value']
 # %%

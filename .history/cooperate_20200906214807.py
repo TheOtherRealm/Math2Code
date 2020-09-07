@@ -47,7 +47,7 @@ def runSim(t):
 	while i<t:
 		# print('itter:',i)
 		for id,value,ability in p:
-			entropy=((sts.lognorm.rvs(.99)+1)*100)
+			entropy=((1/(sts.lognorm.rvs(.99)+1)))
 			lowest=np.where(p['value'] == np.amin(p['value']))
 			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
 			amountToTransfer+=entropy
@@ -85,5 +85,5 @@ p['value']
 			# print(p['value'][cnt],(value*(ability)))
 '''
 #%%
-plt.hist(p['value']*((sts.lognorm.rvs(.99)+1)*100),bins=200,  density=True)
+plt.hist(p['value'],bins=200,  density=True)
 # %%

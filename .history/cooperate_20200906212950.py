@@ -31,7 +31,7 @@ for id in ids:
 	p.append((
 		id,
 		#people's value
-		sts.lognorm.rvs(.5)*100000,
+		sts.lognorm.rvs(.3)*100000,
 		#people's ability
 		(1/(sts.lognorm.rvs(.99)+1))
 		#entropy required to get help
@@ -47,10 +47,9 @@ def runSim(t):
 	while i<t:
 		# print('itter:',i)
 		for id,value,ability in p:
-			entropy=((sts.lognorm.rvs(.99)+1)*100)
+			entropy=(1/(sts.lognorm.rvs(.99)+1))
 			lowest=np.where(p['value'] == np.amin(p['value']))
-			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
-			amountToTransfer+=entropy
+			amountToTransfer=((value-p['value'][lowest[0][0]])*ability)*entropy
 			# print(cnt,amountToTransfer)
 			p['value'][lowest[0]]+=amountToTransfer
 			p['value'][cnt]-=amountToTransfer
@@ -59,11 +58,11 @@ def runSim(t):
 		history.append([i,copy.deepcopy(p)])
 		cnt=0
 
-runSim(100)
+runSim(1000)
 historyA=np.asarray(history)
 #%%
 print(history[0:1])
-print(history[99:100])
+print(history[999:1000])
 # %%
 p['value']
 # %%
@@ -85,5 +84,5 @@ p['value']
 			# print(p['value'][cnt],(value*(ability)))
 '''
 #%%
-plt.hist(p['value']*((sts.lognorm.rvs(.99)+1)*100),bins=200,  density=True)
+plt.hist(p['value'],bins=200,  density=True)
 # %%
