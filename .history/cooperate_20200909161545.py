@@ -1,6 +1,5 @@
 #%%
 import numpy as np
-from numpy.lib import recfunctions as rfn
 import sympy as sym
 import scipy as sp
 import scipy.linalg as la
@@ -28,48 +27,32 @@ ids=np.array(range(0,numOfP),dtype='int64')
 z=np.zeros(numOfP)
 #People object
 temp=[];
-peoType=np.dtype({
+peoType=dtype={
 	'names':
 	['id','value','ability','helpNeeded','helpOut','helpIn'],
 	'formats':
-	['int64', 'float64', 'float32', 'float32', 'object', 'object']
-});
+	['int64','float64','float32','float32','object','object'],
+	'aligned':True
+}
 #Populate people with attributes
-'''
-	temp.append((
-		#0 - id
-		np.array([id]),
-		#1 - people's value
-		np.array([sts.lognorm.rvs(.5)*100000]),
-		#2 - people's ability
-		np.array([(1/(sts.lognorm.rvs(.99)+1))]),
-		#3 - help needed
-		np.array([((sts.lognorm.rvs(.99))*100)]),
-		#4 - people helped
-		np.zeros(numOfP),
-		#5 - people who helped you
-		np.zeros(numOfP)
-	))
-'''
 for id in ids:
-	temp.append((
+	temp.append([
 		#0 - id
-		np.array([id]),
+		id,
 		#1 - people's value
-		np.array([sts.lognorm.rvs(.5)*100000]),
+		sts.lognorm.rvs(.5)*100000,
 		#2 - people's ability
-		np.array([(1/(sts.lognorm.rvs(.99)+1))]),
+		(1/(sts.lognorm.rvs(.99)+1)),
 		#3 - help needed
-		np.array([((sts.lognorm.rvs(.99))*100)]),
+		((sts.lognorm.rvs(.99))*100),
 		#4 - people helped
 		np.zeros(numOfP),
 		#5 - people who helped you
 		np.zeros(numOfP)
-	))
-# temp=np.asarray(temp)
-# rfn.unstructured_to_structured(temp,peoType)
-# temp
-peo=np.asarray(temp,dtype=peoType)
+	])
+temp
+temp=np.asarray(temp)
+peo=np.array(temp,peoType)
 # %%
 history=[copy.deepcopy(peo)]
 def runSim(t,p):
@@ -77,7 +60,7 @@ def runSim(t,p):
 	i=0
 	while i<t:
 		# print('itter:',i)
-		for id,value,ability,helpNeeded,helpOut,helpIn in p:
+		for id,value,ability,helpNeeded,helpOut in p:
 			lowest=np.where(p['value'] == np.amin(p['value']))
 			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
 			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
