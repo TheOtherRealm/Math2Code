@@ -95,12 +95,12 @@ def runSim(t,p):
 			p[i]['value']-=amountToTransfer
 			cnt+=1
 			i+=1;
+		print(peo)
 		j+=1
 		i=0
 		history[j]=peo
 		cnt=0
 runSim(10,peo)
-peo
 #%%
 print(history)
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')

@@ -79,30 +79,31 @@ peo
 # rfn.unstructured_to_structured(temp,peoType)
 # temp
 # %%
-history[0]=peo
+# peo=np.array(temp,dtype=peoType)
+
+history[0]=copy.deepcopy(peo)
 def runSim(t,p):
 	cnt=0
 	i=0
-	j=0
-	while j<t:
-		while i<len(p):
-			poorest=max(p, key=lambda v: p[v]['value'])
-			lowest=p[poorest]['value']
-			# print(poorest,lowest)
-			amountToTransfer=((p[i]['value']-lowest)*(p[i]['ability']))
-			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
-			p[poorest]['value']+=amountToTransfer
-			p[i]['value']-=amountToTransfer
-			cnt+=1
-			i+=1;
-		j+=1
-		i=0
-		history[j]=peo
+	while i<t:
+		# print('itter:',i)
+		# for id,value,ability,helpNeeded,helpOut,helpIn in p:
+		lowest=max(p, key=lambda v: p[v]['value'])
+		# max(int(d['capacity']) for d in input_dict.values())
+		#np.where(p[i]['value'] == np.amin(p['value']))
+		print(p[lowest]['value'])
+		amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
+		amountToTransfer-=((sts.lognorm.rvs(.99))*100)
+		# print(cnt,amountToTransfer)
+		p[i]['value'][lowest[0]]+=amountToTransfer
+		p[i]['value'][cnt]-=amountToTransfer
+		cnt+=1
+		i+=1;
+		history[i]=copy.deepcopy(peo)
 		cnt=0
-runSim(10,peo)
-peo
+runSim(2,peo)
 #%%
-print(history)
+print(history[0][0][1])
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')
 # print(history[999:1000])
 # %%

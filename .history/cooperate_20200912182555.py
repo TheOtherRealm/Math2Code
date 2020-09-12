@@ -62,47 +62,44 @@ peoType=np.dtype({
 	))
 '''
 for id in range(numOfP):
-	peo[id]={
+	peo[id]=[
 		#1 - people's value
-		'value':np.array([sts.lognorm.rvs(.5)*100000]),
+		{'value':np.array([sts.lognorm.rvs(.5)*100000])},
 		#2 - people's ability
-		'ability':np.array([(1/(sts.lognorm.rvs(.99)+1))]),
+		{'ability':np.array([(1/(sts.lognorm.rvs(.99)+1))])},
 		#3 - help needed
-		'helpNeeded':np.array([((sts.lognorm.rvs(.99))*100)]),
+		{'helpNeeded':np.array([((sts.lognorm.rvs(.99))*100)])},
 		#4 - people helped
-		'helpOut':np.zeros(numOfP),
+		{'helpOut':np.zeros(numOfP)},
 		#5 - people who helped you
-		'helpIn':np.zeros(numOfP)
-	}
-peo
+		{'helpIn':np.zeros(numOfP)}
+	]
 # temp=np.asarray(temp)
 # rfn.unstructured_to_structured(temp,peoType)
 # temp
 # %%
-history[0]=peo
+# peo=np.array(temp,dtype=peoType)
+
+history[0]=copy.deepcopy(peo)
 def runSim(t,p):
 	cnt=0
 	i=0
-	j=0
-	while j<t:
-		while i<len(p):
-			poorest=max(p, key=lambda v: p[v]['value'])
-			lowest=p[poorest]['value']
-			# print(poorest,lowest)
-			amountToTransfer=((p[i]['value']-lowest)*(p[i]['ability']))
+	while i<t:
+		# print('itter:',i)
+		iter(p)-> id,value,ability,helpNeeded,helpOut,helpIn :
+			lowest=np.where(p['value'] == np.amin(p['value']))
+			amountToTransfer=((value-p['value'][lowest[0][0]])*(ability))
 			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
-			p[poorest]['value']+=amountToTransfer
-			p[i]['value']-=amountToTransfer
+			# print(cnt,amountToTransfer)
+			p['value'][lowest[0]]+=amountToTransfer
+			p['value'][cnt]-=amountToTransfer
 			cnt+=1
-			i+=1;
-		j+=1
-		i=0
-		history[j]=peo
+		i+=1;
+		history[i]=copy.deepcopy(peo)
 		cnt=0
-runSim(10,peo)
-peo
+runSim(2,peo)
 #%%
-print(history)
+print(history[0][0][1])
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')
 # print(history[999:1000])
 # %%

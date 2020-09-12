@@ -85,22 +85,19 @@ def runSim(t,p):
 	i=0
 	j=0
 	while j<t:
-		while i<len(p):
+		while i<p.count:
 			poorest=max(p, key=lambda v: p[v]['value'])
 			lowest=p[poorest]['value']
-			# print(poorest,lowest)
+			print(poorest,lowest)
 			amountToTransfer=((p[i]['value']-lowest)*(p[i]['ability']))
 			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
 			p[poorest]['value']+=amountToTransfer
 			p[i]['value']-=amountToTransfer
 			cnt+=1
 			i+=1;
-		j+=1
-		i=0
 		history[j]=peo
 		cnt=0
 runSim(10,peo)
-peo
 #%%
 print(history)
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')
