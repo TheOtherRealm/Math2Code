@@ -22,15 +22,6 @@ x, y, z, k, w=sym.symbols('x, y, z, k, w')
 np.random.default_rng()
 np.set_printoptions(suppress=True)
 #%%
-def as_dict(rec):
-    """ turn a numpy recarray record into a dict. this is mostly useful
-    just to have a human readable output of a record on the console.
-    
-    as_dict(my_data[234])
-    """
-    
-    return {name:rec[name] for name in rec.dtype.names}
-#%%
 #Number of People
 numOfP=5
 #Array of people's ids
@@ -82,7 +73,7 @@ for id in ids:
 # %%
 peo=np.array(temp,dtype=peoType)
 
-history[0]=copy.deepcopy(peo)
+history={0:copy.deepcopy(peo)}
 def runSim(t,p):
 	cnt=0
 	i=0
@@ -97,7 +88,7 @@ def runSim(t,p):
 			p['value'][cnt]-=amountToTransfer
 			cnt+=1
 		i+=1;
-		history[i]=copy.deepcopy(peo)
+		history[i]=copy.deepcopy(p)
 		cnt=0
 runSim(2,peo)
 #%%
@@ -133,6 +124,6 @@ plt.plot(history[990:1000][1][0][1])
 historyA[999:1000]
 # %%
 s=pd.Series(history)
-s #['value']
+s
 # plt.plot(x,s[x]['value'])
 # %%

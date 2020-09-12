@@ -82,7 +82,7 @@ for id in ids:
 # %%
 peo=np.array(temp,dtype=peoType)
 
-history[0]=copy.deepcopy(peo)
+history={0:copy.deepcopy(peo)}
 def runSim(t,p):
 	cnt=0
 	i=0

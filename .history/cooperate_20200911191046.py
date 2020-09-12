@@ -5,7 +5,6 @@ import sympy as sym
 import scipy as sp
 import scipy.linalg as la
 import scipy.stats as sts
-import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import uuid
@@ -21,15 +20,6 @@ sym.init_printing(use_latex='mathjax', latex_mode='equation*')
 x, y, z, k, w=sym.symbols('x, y, z, k, w')
 np.random.default_rng()
 np.set_printoptions(suppress=True)
-#%%
-def as_dict(rec):
-    """ turn a numpy recarray record into a dict. this is mostly useful
-    just to have a human readable output of a record on the console.
-    
-    as_dict(my_data[234])
-    """
-    
-    return {name:rec[name] for name in rec.dtype.names}
 #%%
 #Number of People
 numOfP=5
@@ -80,9 +70,8 @@ for id in ids:
 # rfn.unstructured_to_structured(temp,peoType)
 # temp
 # %%
-peo=np.array(temp,dtype=peoType)
-
-history[0]=copy.deepcopy(peo)
+peo=np.asarray(temp,dtype=peoType)
+history=[copy.deepcopy(peo)]
 def runSim(t,p):
 	cnt=0
 	i=0
@@ -97,15 +86,17 @@ def runSim(t,p):
 			p['value'][cnt]-=amountToTransfer
 			cnt+=1
 		i+=1;
-		history[i]=copy.deepcopy(peo)
+		history.append([i,copy.deepcopy(p)])
 		cnt=0
-runSim(2,peo)
+
+runSim(1000,peo)
+historyA=np.asarray(history)
 #%%
-print(history[0][0][1])
-# print('~~~~~~~~~~~~~~~~~~~~~~~~')
-# print(history[999:1000])
+print(historyA[0:1])
+print('~~~~~~~~~~~~~~~~~~~~~~~~')
+print(historyA[1000][1][0][1])
 # %%
-history['value']
+historyA['value']
 # %%
 '''
 			entropy=(1/(sts.lognorm.rvs(.99)+1))*.1
@@ -127,12 +118,6 @@ history['value']
 #%%
 plt.hist(peo['value']*((sts.lognorm.rvs(.99)+1)*100),bins=200,  density=True)
 # %%
-plt.plot(history[990:1000][1][0][1])
+plt.plot(historyA[0:1000][1][0][1])
 
-# %%
-historyA[999:1000]
-# %%
-s=pd.Series(history)
-s #['value']
-# plt.plot(x,s[x]['value'])
 # %%

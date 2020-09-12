@@ -82,7 +82,7 @@ for id in ids:
 # %%
 peo=np.array(temp,dtype=peoType)
 
-history[0]=copy.deepcopy(peo)
+history={0:as_dict(copy.deepcopy(peo))}
 def runSim(t,p):
 	cnt=0
 	i=0
@@ -97,7 +97,7 @@ def runSim(t,p):
 			p['value'][cnt]-=amountToTransfer
 			cnt+=1
 		i+=1;
-		history[i]=copy.deepcopy(peo)
+		history[i]=as_dict(copy.deepcopy(p))
 		cnt=0
 runSim(2,peo)
 #%%
@@ -133,6 +133,6 @@ plt.plot(history[990:1000][1][0][1])
 historyA[999:1000]
 # %%
 s=pd.Series(history)
-s #['value']
+s
 # plt.plot(x,s[x]['value'])
 # %%
