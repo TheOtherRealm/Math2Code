@@ -41,15 +41,11 @@ for id in range(numOfP):
 		#5 - people who helped you
 		'helpIn':np.zeros(numOfP)
 	}
+totalValue=0
 [v['value'] for v in peo.values()]
-def calTotalVal(vals):
-	totalV=0
-	for sum in [v['value'] for v in vals.values()]:
-		totalV+=sum
-	return totalV
-totalValue=calTotalVal(peo)
+for sum in [v['value'] for v in peo.values()]:
+	totalValue+=sum
 totalValue
-sharedValue=0
 peo
 # %%
 history[0]=peo

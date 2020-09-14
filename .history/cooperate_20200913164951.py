@@ -22,6 +22,15 @@ x, y, z, k, w=sym.symbols('x, y, z, k, w')
 np.random.default_rng()
 np.set_printoptions(suppress=True)
 #%%
+def as_dict(rec):
+    """ turn a numpy recarray record into a dict. this is mostly useful
+    just to have a human readable output of a record on the console.
+    
+    as_dict(my_data[234])
+    """
+    
+    return {name:rec[name] for name in rec.dtype.names}
+#%%
 #Number of People
 numOfP=5
 #Array of people's ids
@@ -41,15 +50,11 @@ for id in range(numOfP):
 		#5 - people who helped you
 		'helpIn':np.zeros(numOfP)
 	}
+totalValue=0
 [v['value'] for v in peo.values()]
-def calTotalVal(vals):
-	totalV=0
-	for sum in [v['value'] for v in vals.values()]:
-		totalV+=sum
-	return totalV
-totalValue=calTotalVal(peo)
+for sum in [v['value'] for v in peo.values()]:
+	totalValue+=sum
 totalValue
-sharedValue=0
 peo
 # %%
 history[0]=peo

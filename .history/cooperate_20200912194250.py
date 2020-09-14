@@ -22,35 +22,62 @@ x, y, z, k, w=sym.symbols('x, y, z, k, w')
 np.random.default_rng()
 np.set_printoptions(suppress=True)
 #%%
+def as_dict(rec):
+    """ turn a numpy recarray record into a dict. this is mostly useful
+    just to have a human readable output of a record on the console.
+    
+    as_dict(my_data[234])
+    """
+    
+    return {name:rec[name] for name in rec.dtype.names}
+#%%
 #Number of People
 numOfP=5
 #Array of people's ids
+ids=np.array(range(0,numOfP),dtype='int64')
 z=np.zeros(numOfP)
 #People object
 peo={};
+peoType=np.dtype({
+	'names':
+	['id','value','ability','helpNeeded','helpOut','helpIn'],
+	'formats':
+	['int64', 'float64', 'float32', 'float32', 'object', 'object']
+});
+#Populate people with attributes
+'''
+	temp.append((
+		#0 - id
+		np.array([id]),
+		#1 - people's value
+		np.array([sts.lognorm.rvs(.5)*100000]),
+		#2 - people's ability
+		np.array([(1/(sts.lognorm.rvs(.99)+1))]),
+		#3 - help needed
+		np.array([((sts.lognorm.rvs(.99))*100)]),
+		#4 - people helped
+		np.zeros(numOfP),
+		#5 - people who helped you
+		np.zeros(numOfP)
+	))
+'''
 for id in range(numOfP):
 	peo[id]={
 		#1 - people's value
-		'value':np.array([sts.lognorm.rvs(.5)*75000]),
+		'value':np.array([sts.lognorm.rvs(.5)*100000]),
 		#2 - people's ability
-		'ability':np.array([(1/(sts.lognorm.rvs(.99)*100))]),
+		'ability':np.array([(1/(sts.lognorm.rvs(.99)+1))]),
 		#3 - help needed
-		'helpNeeded':np.array([(1/(sts.lognorm.rvs(.99)+1))*100]),
+		'helpNeeded':np.array([((sts.lognorm.rvs(.99))*100)]),
 		#4 - people helped
 		'helpOut':np.zeros(numOfP),
 		#5 - people who helped you
 		'helpIn':np.zeros(numOfP)
 	}
 [v['value'] for v in peo.values()]
-def calTotalVal(vals):
-	totalV=0
-	for sum in [v['value'] for v in vals.values()]:
-		totalV+=sum
-	return totalV
-totalValue=calTotalVal(peo)
-totalValue
-sharedValue=0
-peo
+# temp=np.asarray(temp)
+# rfn.unstructured_to_structured(temp,peoType)
+# temp
 # %%
 history[0]=peo
 def runSim(t,p):
@@ -59,26 +86,22 @@ def runSim(t,p):
 	j=0
 	while j<t:
 		while i<len(p):
-			poorest=min(p, key=lambda v: p[v]['value'])
-			lowestW=p[poorest]['value']
-			# needMostHelp=max(p, key=lambda v: p[v]['helpNeeded'])
+			poorest=max(p, key=lambda v: p[v]['value'])
+			lowest=p[poorest]['value']
 			# print(poorest,lowest)
-			amountToTransfer=((p[i]['value']-lowestW)-(p[poorest]['helpNeeded']))
+			amountToTransfer=((p[i]['value']-lowest)*(p[i]['ability']))
 			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
 			p[poorest]['value']+=amountToTransfer
-			p[i]['value']-=amountToTransfer-(p[i]['ability'])
-			p[poorest]['helpIn'][i]+=1
-			p[i]['helpOut'][poorest]+=1
+			p[i]['value']-=amountToTransfer
 			cnt+=1
 			i+=1;
 		j+=1
 		i=0
 		history[j]=peo
 		cnt=0
-runSim(100,peo)
+runSim(10,peo)
 #%%
 [v['value'] for v in peo.values()]
-peo
 # print(history)
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')
 # print(history[999:1000])
