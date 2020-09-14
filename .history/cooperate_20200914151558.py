@@ -8,7 +8,6 @@ import scipy.stats as sts
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from pprint import pprint
 import uuid
 import nbformat
 import copy
@@ -73,52 +72,42 @@ bufferFund=0
 [v['value'] for v in part.values()]
 #%%
 def calBuffer(mems,bf):
+	i=0
 	for mem in mems:
 		for p in mem:
-			if(bf>mem[p]['bufIndex']):
-				bf=bf-mem[p]['bufIndex']
-				mem[p]['value']+=mem[p]['bufIndex']
-			mem[p]['bufIndex']=mem[p]['value']*.2
-			bf+=mem[p]['bufIndex']
+			pprint(p['bufIndex'])
+			bf-=p['bufIndex']
+			p['value']+=p['bufIndex']
+			p['bufIndex']=p['value']*.2
+			bf+=p['bufIndex']
 	return bf
 bufferFund=calBuffer(members,bufferFund)
-bufferFund
-# [v['value'] for v in invest.values()]
-# [v['value'] for v in oper.values()]
-# [v['value'] for v in assoc.values()]
-# [v['value'] for v in part.values()]
 #%%
 # history[0]=peo
 def runSim(t,p):
 	cnt=0
 	i=0
-	j=1
+	j=0
 	while j<t:
-		calBuffer(p,bf)
-		# while i<len(p):
-		# 	poorest=min(p, key=lambda v: p[v]['value'])
-		# 	lowestW=p[poorest]['value']
-		# 	# needMostHelp=max(p, key=lambda v: p[v]['helpNeeded'])
-		# 	# print(poorest,lowest)
-		# 	amountToTransfer=((p[i]['value']-lowestW)-(p[poorest]['helpNeeded']))
-		# 	amountToTransfer-=((sts.lognorm.rvs(.99))*100)
-		# 	p[poorest]['value']+=amountToTransfer
-		# 	p[i]['value']-=amountToTransfer-(p[i]['ability'])
-		# 	p[poorest]['helpIn'][i]+=1
-		# 	p[i]['helpOut'][poorest]+=1
-		# 	cnt+=1
-		# 	i+=1;
+		while i<len(p):
+			poorest=min(p, key=lambda v: p[v]['value'])
+			lowestW=p[poorest]['value']
+			# needMostHelp=max(p, key=lambda v: p[v]['helpNeeded'])
+			# print(poorest,lowest)
+			amountToTransfer=((p[i]['value']-lowestW)-(p[poorest]['helpNeeded']))
+			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
+			p[poorest]['value']+=amountToTransfer
+			p[i]['value']-=amountToTransfer-(p[i]['ability'])
+			p[poorest]['helpIn'][i]+=1
+			p[i]['helpOut'][poorest]+=1
+			cnt+=1
+			i+=1;
 		j+=1
 		i=0
 		# history[j]=peo
 		cnt=0
-	return calBuffer(p,bf)
-bufferFund=runSim(1000,members)
-pprint(bufferFund)
-[v['value'] for v in invest.values()]
-[v['value'] for v in oper.values()]
-[v['value'] for v in assoc.values()]
-[v['value'] for v in part.values()]
+runSim(1000,invest)
+
 #%%
 [v['value'] for v in invest.values()]
 # invest

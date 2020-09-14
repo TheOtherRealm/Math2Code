@@ -8,7 +8,6 @@ import scipy.stats as sts
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from pprint import pprint
 import uuid
 import nbformat
 import copy
@@ -35,93 +34,67 @@ numOfPart=5
 numOfM=numOfAssoc+numOfInvest+numOfOper+numOfPart
 numOfM
 z=np.zeros(numOfM)
-def calMemberVal(vals):
+def calTotalVal(vals):
 	totalV=0
 	for sum in [v['value'] for v in vals.values()]:
 		totalV+=sum
 	return totalV
 #People function
 def popPeo(p,v,valCalculated=True):
-	mem={}
 	for id in range(p):
-		mem[id]={
+		peo[id]={
 			#1 - people's value
-			'value':np.array([sts.lognorm.rvs(.5)*v]) if valCalculated else np.array([v]),
+			'value':np.array([sts.lognorm.rvs(.5)*v]) if valCalculated else v,
 			#2 - people's ability
 			'ability':np.array([(1/(sts.lognorm.rvs(.99)*100))]),
 			#3 - help needed
 			'helpNeeded':np.array([(1/(sts.lognorm.rvs(.99)+1))*100]),
 			#4 - people helped
-			'bufIndex':0
+			'helpOut':np.zeros(numOfM),
+			#5 - people who helped you
+			'helpIn':np.zeros(numOfM)
 		}
-	return mem
-invest=popPeo(numOfInvest,200000)
+	return peo
+invest=popPeo(numOfInvest,2000000)
 oper=popPeo(numOfOper,75000)
-assoc=popPeo(numOfAssoc,2500.0,False)
-part=popPeo(numOfPart,75000)
-members=[assoc,oper,part,invest]
-def calTotalVal(mem):
-	tV=0
-	for i in range(len(mem)):
-		tV+=calMemberVal(mem[i])
-	return tV
-totalValue=calTotalVal(members)
+assoc=popPeo(numOfAssoc,2500,False)
+part=popPeo(numOfPart,7500)
+totalValue=calTotalVal(invest)+calTotalVal(oper)+calTotalVal(assoc)+calTotalVal(part)
+totalValue
 bufferFund=0
 [v['value'] for v in invest.values()]
 [v['value'] for v in oper.values()]
 [v['value'] for v in assoc.values()]
 [v['value'] for v in part.values()]
-#%%
-def calBuffer(mems,bf):
-	for mem in mems:
-		for p in mem:
-			if(bf>mem[p]['bufIndex']):
-				bf=bf-mem[p]['bufIndex']
-				mem[p]['value']+=mem[p]['bufIndex']
-			mem[p]['bufIndex']=mem[p]['value']*.2
-			bf+=mem[p]['bufIndex']
-	return bf
-bufferFund=calBuffer(members,bufferFund)
-bufferFund
-# [v['value'] for v in invest.values()]
-# [v['value'] for v in oper.values()]
-# [v['value'] for v in assoc.values()]
-# [v['value'] for v in part.values()]
-#%%
-# history[0]=peo
+
+# %%
+history[0]=peo
 def runSim(t,p):
 	cnt=0
 	i=0
-	j=1
+	j=0
 	while j<t:
-		calBuffer(p,bf)
-		# while i<len(p):
-		# 	poorest=min(p, key=lambda v: p[v]['value'])
-		# 	lowestW=p[poorest]['value']
-		# 	# needMostHelp=max(p, key=lambda v: p[v]['helpNeeded'])
-		# 	# print(poorest,lowest)
-		# 	amountToTransfer=((p[i]['value']-lowestW)-(p[poorest]['helpNeeded']))
-		# 	amountToTransfer-=((sts.lognorm.rvs(.99))*100)
-		# 	p[poorest]['value']+=amountToTransfer
-		# 	p[i]['value']-=amountToTransfer-(p[i]['ability'])
-		# 	p[poorest]['helpIn'][i]+=1
-		# 	p[i]['helpOut'][poorest]+=1
-		# 	cnt+=1
-		# 	i+=1;
+		while i<len(p):
+			poorest=min(p, key=lambda v: p[v]['value'])
+			lowestW=p[poorest]['value']
+			# needMostHelp=max(p, key=lambda v: p[v]['helpNeeded'])
+			# print(poorest,lowest)
+			amountToTransfer=((p[i]['value']-lowestW)-(p[poorest]['helpNeeded']))
+			amountToTransfer-=((sts.lognorm.rvs(.99))*100)
+			p[poorest]['value']+=amountToTransfer
+			p[i]['value']-=amountToTransfer-(p[i]['ability'])
+			p[poorest]['helpIn'][i]+=1
+			p[i]['helpOut'][poorest]+=1
+			cnt+=1
+			i+=1;
 		j+=1
 		i=0
-		# history[j]=peo
+		history[j]=peo
 		cnt=0
-	return calBuffer(p,bf)
-bufferFund=runSim(1000,members)
-pprint(bufferFund)
-[v['value'] for v in invest.values()]
-[v['value'] for v in oper.values()]
-[v['value'] for v in assoc.values()]
-[v['value'] for v in part.values()]
+runSim(100,peo)
 #%%
-[v['value'] for v in invest.values()]
-# invest
+[v['value'] for v in peo.values()]
+peo
 # print(history)
 # print('~~~~~~~~~~~~~~~~~~~~~~~~')
 # print(history[999:1000])
