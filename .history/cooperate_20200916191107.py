@@ -70,21 +70,19 @@ totalValue=calTotalVal(members)
 bufferFund=0
 [v['value'] for v in invest.values()]
 [v['value'] for v in oper.values()]
-[v['isAssoc'] for v in assoc.values()]
+[v['value'] for v in assoc.values()]
 [v['value'] for v in part.values()]
 #%%
 def calBuffer(mems,bf):
 	for mem in mems:
 		for p in mem:
-			# pprint(mem[p]['isAssoc'])
-			if(mem[p]['isAssoc']==False):
+			if(p['isAssoc']):
+				# if((bf/(len(mem)*len(mems)))>mem[p]['bufIndex']):
 				bf=bf-mem[p]['bufIndex']
 				mem[p]['bufIndex']=mem[p]['value']*.2
 				mem[p]['value']-=mem[p]['bufIndex']
 				mem[p]['value']+=bf/(len(mem)*len(mems))
 				bf+=mem[p]['bufIndex']
-			elif(mem[p]['value']<2500):
-				mem[p]['value']+=bf-(2500-mem[p]['value'])
 	# pprint(bf/(len(mem)*len(mems)))
 	return bf
 bufferFund=calBuffer(members,bufferFund)

@@ -41,7 +41,7 @@ def calMemberVal(vals):
 		totalV+=sum
 	return totalV
 #People function
-def popPeo(p,v,valCalculated=True,isAssoc=False):
+def popPeo(p,v,valCalculated=True):
 	mem={}
 	for id in range(p):
 		mem[id]={
@@ -52,13 +52,12 @@ def popPeo(p,v,valCalculated=True,isAssoc=False):
 			#3 - help needed
 			'helpNeeded':np.array([(1/(sts.lognorm.rvs(.99)+1))*100]),
 			#4 - people helped
-			'bufIndex':0,
-			'isAssoc':isAssoc
+			'bufIndex':0
 		}
 	return mem
 invest=popPeo(numOfInvest,200000)
 oper=popPeo(numOfOper,75000)
-assoc=popPeo(numOfAssoc,2500.0,False,True)
+assoc=popPeo(numOfAssoc,2500.0,False)
 part=popPeo(numOfPart,75000)
 members=[assoc,oper,part,invest]
 def calTotalVal(mem):
@@ -70,22 +69,18 @@ totalValue=calTotalVal(members)
 bufferFund=0
 [v['value'] for v in invest.values()]
 [v['value'] for v in oper.values()]
-[v['isAssoc'] for v in assoc.values()]
+[v['value'] for v in assoc.values()]
 [v['value'] for v in part.values()]
 #%%
 def calBuffer(mems,bf):
 	for mem in mems:
 		for p in mem:
-			# pprint(mem[p]['isAssoc'])
-			if(mem[p]['isAssoc']==False):
-				bf=bf-mem[p]['bufIndex']
-				mem[p]['bufIndex']=mem[p]['value']*.2
-				mem[p]['value']-=mem[p]['bufIndex']
-				mem[p]['value']+=bf/(len(mem)*len(mems))
-				bf+=mem[p]['bufIndex']
-			elif(mem[p]['value']<2500):
-				mem[p]['value']+=bf-(2500-mem[p]['value'])
-	# pprint(bf/(len(mem)*len(mems)))
+			# if((bf/(len(mem)*len(mems)))>mem[p]['bufIndex']):
+			bf=bf-mem[p]['bufIndex']
+			mem[p]['value']+=mem[p]['bufIndex']
+			mem[p]['bufIndex']=mem[p]['value']*.2
+			bf+=mem[p]['bufIndex']
+	pprint(bf/(len(mem)*len(mems)))
 	return bf
 bufferFund=calBuffer(members,bufferFund)
 bufferFund
@@ -119,7 +114,7 @@ def runSim(t,p):
 		# history[j]=peo
 		cnt=0
 	return calBuffer(p,bufferFund)
-runSim(1000,members)
+bufferFund=runSim(1000,members)
 pprint(bufferFund)
 [v['value'] for v in invest.values()]
 [v['value'] for v in oper.values()]

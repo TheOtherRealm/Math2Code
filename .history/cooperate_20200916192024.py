@@ -76,14 +76,13 @@ bufferFund=0
 def calBuffer(mems,bf):
 	for mem in mems:
 		for p in mem:
-			# pprint(mem[p]['isAssoc'])
-			if(mem[p]['isAssoc']==False):
+			if(p['isAssoc']==False):
 				bf=bf-mem[p]['bufIndex']
 				mem[p]['bufIndex']=mem[p]['value']*.2
 				mem[p]['value']-=mem[p]['bufIndex']
 				mem[p]['value']+=bf/(len(mem)*len(mems))
 				bf+=mem[p]['bufIndex']
-			elif(mem[p]['value']<2500):
+			elif(p['value']<2500):
 				mem[p]['value']+=bf-(2500-mem[p]['value'])
 	# pprint(bf/(len(mem)*len(mems)))
 	return bf
